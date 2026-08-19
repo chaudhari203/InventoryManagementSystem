@@ -18,6 +18,7 @@ from flask_login import (
 )
 import csv
 import io
+import os
 from sqlalchemy import func, or_
 
 from models import db
@@ -38,7 +39,13 @@ app = Flask(__name__)
 
 app.config["SECRET_KEY"] = "inventory-management-secret"
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///inventory.db"
+
+database_url = os.environ.get("DATABASE_URL")
+
+if database_url:
+    app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+else:
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///inventory.db"
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 

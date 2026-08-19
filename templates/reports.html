@@ -1,0 +1,669 @@
+{% extends "base.html" %}
+
+{% block title %}
+Inventory Reports
+{% endblock %}
+
+{% block content %}
+
+
+<!-- ================= PAGE HEADER ================= -->
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+
+        <h2 class="fw-bold mb-1">
+            Inventory Reports
+        </h2>
+
+        <p class="text-muted mb-0">
+            Overview and analysis of your inventory
+        </p>
+
+    </div>
+
+
+    <div class="d-flex gap-2">
+
+        <a
+            href="{{ url_for('export_products') }}"
+            class="btn btn-success"
+        >
+            <i class="bi bi-file-earmark-spreadsheet me-1"></i>
+            Export Products
+        </a>
+
+
+        <a
+            href="{{ url_for('export_transactions') }}"
+            class="btn btn-outline-primary"
+        >
+            <i class="bi bi-download me-1"></i>
+            Export Transactions
+        </a>
+         <a
+        href="{{ url_for('reports_pdf') }}"
+        class="btn btn-danger"
+    >
+        <i class="bi bi-file-earmark-pdf me-1"></i>
+        Download PDF
+    </a>
+
+    </div>
+
+</div>
+
+
+<!-- ================= SUMMARY CARDS ================= -->
+
+<div class="row g-4 mb-4">
+
+
+    <!-- TOTAL PRODUCTS -->
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="card border-0 shadow-sm h-100">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between">
+
+                    <div>
+
+                        <p class="text-muted mb-1">
+                            Total Products
+                        </p>
+
+                        <h2 class="fw-bold mb-0">
+                            {{ total_products }}
+                        </h2>
+
+                    </div>
+
+                    <div class="fs-2">
+                        📦
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- TOTAL STOCK -->
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="card border-0 shadow-sm h-100">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between">
+
+                    <div>
+
+                        <p class="text-muted mb-1">
+                            Total Stock
+                        </p>
+
+                        <h2 class="fw-bold mb-0">
+                            {{ total_stock }}
+                        </h2>
+
+                    </div>
+
+                    <div class="fs-2">
+                        📊
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- STOCK IN -->
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="card border-0 shadow-sm h-100">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between">
+
+                    <div>
+
+                        <p class="text-muted mb-1">
+                            Total Stock In
+                        </p>
+
+                        <h2 class="fw-bold text-success mb-0">
+                            {{ stock_in }}
+                        </h2>
+
+                    </div>
+
+                    <div class="fs-2">
+                        📥
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- STOCK OUT -->
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="card border-0 shadow-sm h-100">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between">
+
+                    <div>
+
+                        <p class="text-muted mb-1">
+                            Total Stock Out
+                        </p>
+
+                        <h2 class="fw-bold text-danger mb-0">
+                            {{ stock_out }}
+                        </h2>
+
+                    </div>
+
+                    <div class="fs-2">
+                        📤
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= INVENTORY VALUE ================= -->
+
+<div class="card border-0 shadow-sm mb-4">
+
+    <div class="card-body">
+
+        <div class="d-flex justify-content-between align-items-center">
+
+            <div>
+
+                <p class="text-muted mb-1">
+                    Total Inventory Value
+                </p>
+
+                <h2 class="fw-bold mb-0">
+                    ₹{{ "%.2f"|format(inventory_value) }}
+                </h2>
+
+            </div>
+
+            <div class="fs-1">
+                💰
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= PRODUCT REPORTS ================= -->
+
+<div class="row g-4">
+
+
+    <!-- LOW STOCK -->
+
+    <div class="col-lg-6">
+
+        <div class="card border-0 shadow-sm">
+
+            <div class="card-header bg-white border-0 py-3">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <h5 class="fw-bold mb-0">
+                        ⚠️ Low Stock Products
+                    </h5>
+
+                    <span class="badge bg-danger">
+                        {{ low_stock_products|length }}
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="table-responsive">
+
+                <table class="table table-hover mb-0">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>
+                                Product
+                            </th>
+
+                            <th>
+                                SKU
+                            </th>
+
+                            <th>
+                                Stock
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for product in low_stock_products %}
+
+                        <tr>
+
+                            <td class="fw-semibold">
+                                {{ product.name }}
+                            </td>
+
+                            <td>
+                                {{ product.sku }}
+                            </td>
+
+                            <td>
+
+                                <span class="badge bg-danger">
+                                    {{ product.quantity }}
+                                </span>
+
+                            </td>
+
+                        </tr>
+
+                        {% else %}
+
+                        <tr>
+
+                            <td
+                                colspan="3"
+                                class="text-center py-4"
+                            >
+
+                                <div class="fs-3">
+                                    ✅
+                                </div>
+
+                                <span class="text-muted">
+                                    No low-stock products.
+                                </span>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- TOP STOCK -->
+
+    <div class="col-lg-6">
+
+        <div class="card border-0 shadow-sm">
+
+            <div class="card-header bg-white border-0 py-3">
+
+                <h5 class="fw-bold mb-0">
+                    📦 Top Stock Products
+                </h5>
+
+            </div>
+
+
+            <div class="table-responsive">
+
+                <table class="table table-hover mb-0">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>
+                                Product
+                            </th>
+
+                            <th>
+                                SKU
+                            </th>
+
+                            <th>
+                                Stock
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for product in top_stock_products %}
+
+                        <tr>
+
+                            <td class="fw-semibold">
+                                {{ product.name }}
+                            </td>
+
+                            <td>
+                                {{ product.sku }}
+                            </td>
+
+                            <td>
+
+                                <span class="badge bg-success">
+                                    {{ product.quantity }}
+                                </span>
+
+                            </td>
+
+                        </tr>
+
+                        {% else %}
+
+                        <tr>
+
+                            <td
+                                colspan="3"
+                                class="text-center py-4"
+                            >
+
+                                <span class="text-muted">
+                                    No products available.
+                                </span>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= CHARTS ================= -->
+
+<div class="row g-4 mt-1">
+
+
+    <!-- STOCK MOVEMENT CHART -->
+
+    <div class="col-lg-6">
+
+        <div class="card border-0 shadow-sm">
+
+            <div class="card-header bg-white border-0 py-3">
+
+                <h5 class="fw-bold mb-0">
+                    📊 Stock Movement
+                </h5>
+
+            </div>
+
+            <div class="card-body">
+
+                <div style="height: 300px;">
+
+                    <canvas id="stockMovementChart"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- TOP PRODUCTS CHART -->
+
+    <div class="col-lg-6">
+
+        <div class="card border-0 shadow-sm">
+
+            <div class="card-header bg-white border-0 py-3">
+
+                <h5 class="fw-bold mb-0">
+                    📦 Top Products by Stock
+                </h5>
+
+            </div>
+
+            <div class="card-body">
+
+                <div style="height: 300px;">
+
+                    <canvas id="topProductsChart"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= CHART.JS ================= -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+
+        // ==========================================
+        // STOCK MOVEMENT CHART
+        // ==========================================
+
+        const stockMovementCanvas =
+            document.getElementById(
+                "stockMovementChart"
+            );
+
+
+        if (stockMovementCanvas) {
+
+            new Chart(
+                stockMovementCanvas,
+                {
+
+                    type: "bar",
+
+                    data: {
+
+                        labels:
+                            {{ stock_chart_labels | tojson }},
+
+                        datasets: [
+
+                            {
+
+                                label: "Quantity",
+
+                                data:
+                                    {{ stock_chart_data | tojson }}
+
+                            }
+
+                        ]
+
+                    },
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        scales: {
+
+                            y: {
+
+                                beginAtZero: true
+
+                            }
+
+                        },
+
+                        plugins: {
+
+                            legend: {
+
+                                display: false
+
+                            }
+
+                        }
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        // ==========================================
+        // TOP PRODUCTS CHART
+        // ==========================================
+
+        const topProductsCanvas =
+            document.getElementById(
+                "topProductsChart"
+            );
+
+
+        if (topProductsCanvas) {
+
+            new Chart(
+                topProductsCanvas,
+                {
+
+                    type: "bar",
+
+                    data: {
+
+                        labels:
+                            {{ product_chart_labels | tojson }},
+
+                        datasets: [
+
+                            {
+
+                                label: "Stock",
+
+                                data:
+                                    {{ product_chart_data | tojson }}
+
+                            }
+
+                        ]
+
+                    },
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        scales: {
+
+                            y: {
+
+                                beginAtZero: true
+
+                            }
+
+                        },
+
+                        plugins: {
+
+                            legend: {
+
+                                display: false
+
+                            }
+
+                        }
+
+                    }
+
+                }
+            );
+
+        }
+
+    }
+);
+
+</script>
+
+
+{% endblock %}

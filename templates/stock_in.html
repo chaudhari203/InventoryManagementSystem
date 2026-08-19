@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h3>Stock In - {{ product.name }}</h3>
+
+<form method="POST">
+
+    <label>Quantity</label>
+
+    <input
+        type="number"
+        name="quantity"
+        class="form-control"
+        min="1"
+        required
+    >
+
+    <button
+        class="btn btn-success mt-3"
+    >
+        Add Stock
+    </button>
+
+</form>
+
+{% endblock %}

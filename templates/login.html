@@ -1,0 +1,92 @@
+{% extends "auth_base.html" %}
+{% block title %}
+Admin Login
+{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center mt-5">
+
+    <div class="col-md-5 col-lg-4">
+
+        <div class="card shadow border-0">
+
+            <div class="card-body p-4">
+
+                <div class="text-center mb-4">
+
+                    <div class="fs-1">
+                        📦
+                    </div>
+
+                    <h3 class="fw-bold">
+                        Inventory Management
+                    </h3>
+
+                    <p class="text-muted">
+                        Admin Login
+                    </p>
+
+                </div>
+
+
+                <form method="POST">
+
+                    <!-- Username -->
+
+                    <div class="mb-3">
+
+                        <label class="form-label fw-semibold">
+                            Username
+                        </label>
+
+                        <input
+                            type="text"
+                            name="username"
+                            class="form-control"
+                            placeholder="Enter username"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Password -->
+
+                    <div class="mb-3">
+
+                        <label class="form-label fw-semibold">
+                            Password
+                        </label>
+
+                        <input
+                            type="password"
+                            name="password"
+                            class="form-control"
+                            placeholder="Enter password"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Login Button -->
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary w-100"
+                    >
+                        Login
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

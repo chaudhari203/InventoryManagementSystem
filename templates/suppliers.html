@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}
+Suppliers
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2 class="fw-bold">Suppliers</h2>
+
+        <p class="text-muted mb-0">
+            Manage suppliers
+        </p>
+    </div>
+
+    <a
+        href="{{ url_for('add_supplier') }}"
+        class="btn btn-primary"
+    >
+        <i class="bi bi-plus-lg me-1"></i>
+        Add Supplier
+    </a>
+
+</div>
+
+
+<div class="card border-0 shadow-sm">
+
+    <div class="table-responsive">
+
+        <table class="table table-hover mb-0">
+
+            <thead class="table-light">
+
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for supplier in suppliers %}
+
+                <tr>
+
+                    <td>
+                        {{ supplier.id }}
+                    </td>
+
+                    <td class="fw-semibold">
+                        {{ supplier.name }}
+                    </td>
+
+                    <td>
+                        {{ supplier.phone }}
+                    </td>
+
+                    <td>
+                        {{ supplier.email }}
+                    </td>
+
+                    <td class="text-end">
+
+                        <!-- Edit -->
+                        <a
+                            href="{{ url_for('edit_supplier', id=supplier.id) }}"
+                            class="btn btn-sm btn-outline-primary me-1"
+                            title="Edit Supplier"
+                        >
+                            <i class="bi bi-pencil"></i>
+                        </a>
+
+                        <!-- Delete -->
+                        <form
+                            action="{{ url_for('delete_supplier', id=supplier.id) }}"
+                            method="POST"
+                            class="d-inline"
+                            onsubmit="return confirm('Are you sure you want to delete this supplier?');"
+                        >
+                            <button
+                                type="submit"
+                                class="btn btn-sm btn-outline-danger"
+                                title="Delete Supplier"
+                            >
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+
+                    </td>
+
+                </tr>
+
+                {% else %}
+
+                <tr>
+
+                    <td
+                        colspan="5"
+                        class="text-center py-5"
+                    >
+
+                        <div class="fs-1">
+                            🏢
+                        </div>
+
+                        <h5 class="mt-2">
+                            No Suppliers Found
+                        </h5>
+
+                        <p class="text-muted">
+                            Add your first supplier.
+                        </p>
+
+                        <a
+                            href="{{ url_for('add_supplier') }}"
+                            class="btn btn-primary"
+                        >
+                            Add Supplier
+                        </a>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

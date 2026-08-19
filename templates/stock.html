@@ -1,0 +1,341 @@
+{% extends "base.html" %}
+
+{% block title %}
+Stock Management
+{% endblock %}
+
+{% block content %}
+
+<h2 class="mb-4">
+    Stock Management
+</h2>
+
+
+<!-- ================= SEARCH & FILTER ================= -->
+
+<div class="card shadow-sm mb-4">
+
+    <div class="card-body">
+
+        <form
+            method="GET"
+            action="{{ url_for('stock') }}"
+            class="row g-2"
+        >
+
+            <div class="col-md-7">
+
+                <input
+                    type="text"
+                    name="keyword"
+                    value="{{ keyword }}"
+                    class="form-control"
+                    placeholder="Search by product name or SKU..."
+                >
+
+            </div>
+
+
+            <div class="col-md-3">
+
+                <select
+                    name="type"
+                    class="form-select"
+                >
+
+                    <option value="">
+                        All Transactions
+                    </option>
+
+                    <option
+                        value="IN"
+                        {% if transaction_type == "IN" %}
+                        selected
+                        {% endif %}
+                    >
+                        Stock In
+                    </option>
+
+                    <option
+                        value="OUT"
+                        {% if transaction_type == "OUT" %}
+                        selected
+                        {% endif %}
+                    >
+                        Stock Out
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="col-md-2">
+
+                <button
+                    type="submit"
+                    class="btn btn-primary w-100"
+                >
+                    <i class="bi bi-search me-1"></i>
+                    Search
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- ================= STOCK UPDATE ================= -->
+
+<div class="card shadow-sm mb-4">
+
+    <div class="card-body">
+
+        <form method="POST">
+
+            <div class="row g-3">
+
+                <!-- Product -->
+
+                <div class="col-md-4">
+
+                    <label class="form-label">
+                        Product
+                    </label>
+
+                    <select
+                        name="product_id"
+                        class="form-select"
+                        required
+                    >
+
+                        <option value="">
+                            Select Product
+                        </option>
+
+                        {% for product in products %}
+
+                        <option value="{{ product.id }}">
+                            {{ product.name }}
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- Transaction Type -->
+
+                <div class="col-md-3">
+
+                    <label class="form-label">
+                        Transaction
+                    </label>
+
+                    <select
+                        name="transaction_type"
+                        class="form-select"
+                        required
+                    >
+
+                        <option value="IN">
+                            Stock In
+                        </option>
+
+                        <option value="OUT">
+                            Stock Out
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Quantity -->
+
+                <div class="col-md-3">
+
+                    <label class="form-label">
+                        Quantity
+                    </label>
+
+                    <input
+                        type="number"
+                        name="quantity"
+                        class="form-control"
+                        min="1"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Save -->
+
+                <div class="col-md-2 d-flex align-items-end">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary w-100"
+                    >
+                        Save
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- ================= TRANSACTION HISTORY ================= -->
+
+<div class="card shadow-sm">
+
+    <div class="card-header bg-white py-3">
+
+        <div class="d-flex justify-content-between align-items-center">
+
+            <h5 class="fw-bold mb-0">
+                Transaction History
+            </h5>
+
+            <span class="badge bg-secondary">
+                {{ transactions|length }}
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="table-responsive">
+
+        <table class="table table-hover mb-0">
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        ID
+                    </th>
+
+                    <th>
+                        Product
+                    </th>
+
+                    <th>
+                        SKU
+                    </th>
+
+                    <th>
+                        Type
+                    </th>
+
+                    <th>
+                        Quantity
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for transaction in transactions %}
+
+                <tr>
+
+                    <td>
+                        {{ transaction.id }}
+                    </td>
+
+                    <td class="fw-semibold">
+                        {{ transaction.product.name }}
+                    </td>
+
+                    <td>
+                        {{ transaction.product.sku }}
+                    </td>
+
+                    <td>
+
+                        {% if transaction.transaction_type == 'IN' %}
+
+                        <span class="badge bg-success">
+
+                            <i class="bi bi-arrow-down-circle me-1"></i>
+
+                            Stock In
+
+                        </span>
+
+                        {% else %}
+
+                        <span class="badge bg-danger">
+
+                            <i class="bi bi-arrow-up-circle me-1"></i>
+
+                            Stock Out
+
+                        </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td class="fw-semibold">
+                        {{ transaction.quantity }}
+                    </td>
+
+                </tr>
+
+
+                {% else %}
+
+                <tr>
+
+                    <td
+                        colspan="5"
+                        class="text-center py-5"
+                    >
+
+                        <div class="fs-1">
+                            📋
+                        </div>
+
+                        <h5 class="mt-2">
+                            No transactions found
+                        </h5>
+
+                        <p class="text-muted mb-0">
+                            Try changing your search or filter.
+                        </p>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}
